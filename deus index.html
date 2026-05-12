@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SuperGrow — LinkedIn Content Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: rgba(255,255,255,0.07);
+    --accent: #6c63ff;
+    --accent2: #00e5c0;
+    --text: #f0eff8;
+    --muted: #8b8a9e;
+    --card: #13131c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 48px;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.4rem;
+    background: linear-gradient(135deg, #6c63ff, #00e5c0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none; font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+
+  .btn-ghost {
+    color: var(--muted); background: none; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    cursor: pointer; padding: 8px 16px; border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #6c63ff, #5a52e8);
+    color: white; border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500; cursor: pointer;
+    padding: 10px 22px; border-radius: 10px;
+    transition: opacity 0.2s, transform 0.2s;
+    box-shadow: 0 4px 20px rgba(108,99,255,0.3);
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    padding: 120px 24px 80px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -100px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,229,192,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(108,99,255,0.12); border: 1px solid rgba(108,99,255,0.3);
+    color: #a99fff; font-size: 0.8rem; font-weight: 500;
+    padding: 6px 14px; border-radius: 100px; margin-bottom: 32px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent2); animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800; line-height: 1.1; letter-spacing: -2px;
+    max-width: 780px;
+    animation: fadeUp 0.7s ease 0.1s both;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, #6c63ff 0%, #00e5c0 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem; color: var(--muted); max-width: 520px;
+    line-height: 1.7; margin: 24px auto 0;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; align-items: center;
+    margin-top: 40px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s ease 0.3s both;
+  }
+
+  .btn-large {
+    padding: 14px 32px; font-size: 1rem; font-weight: 600;
+    border-radius: 12px;
+  }
+
+  .btn-outline {
+    background: none; border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500; cursor: pointer;
+    padding: 14px 32px; border-radius: 12px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--accent); background: rgba(108,99,255,0.05); }
+
+  .social-proof {
+    margin-top: 48px; display: flex; align-items: center; gap: 16px;
+    animation: fadeUp 0.7s ease 0.4s both;
+  }
+
+  .stars { color: #fbbf24; font-size: 1rem; letter-spacing: 2px; }
+
+  .proof-text { font-size: 0.85rem; color: var(--muted); }
+  .proof-text strong { color: var(--text); }
+
+  /* STATS */
+  .stats {
+    padding: 80px 48px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; max-width: 1000px; margin: 0 auto;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    padding: 40px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem; font-weight: 800;
+    background: linear-gradient(135deg, #6c63ff, #00e5c0);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .stat-label {
+    color: var(--muted); font-size: 0.9rem; margin-top: 8px; line-height: 1.5;
+  }
+
+  /* FEATURES */
+  .section { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+
+  .section-tag {
+    display: inline-block; font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--accent2);
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800; letter-spacing: -1px; line-height: 1.15;
+  }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+    margin-top: 60px;
+    border: 1px solid var(--border); border-radius: 20px; overflow: hidden;
+  }
+
+  .feat-card {
+    background: var(--card);
+    padding: 40px 32px;
+    transition: background 0.3s;
+    position: relative; overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+  .feat-card:last-child { border-right: none; }
+
+  .feat-card:hover { background: var(--surface2); }
+
+  .feat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .feat-card:hover::before { opacity: 1; }
+
+  .feat-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(108,99,255,0.15); display: flex;
+    align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 20px;
+  }
+
+  .feat-title {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem;
+    font-weight: 700; margin-bottom: 10px;
+  }
+
+  .feat-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* TOOLKIT */
+  .toolkit {
+    padding: 100px 48px; background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toolkit-inner { max-width: 1200px; margin: 0 auto; }
+
+  .toolkit-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    margin-top: 60px;
+  }
+
+  .tool-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .tool-card:hover { border-color: rgba(108,99,255,0.4); transform: translateY(-3px); }
+
+  .tool-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent2); margin-bottom: 12px;
+  }
+
+  .tool-title {
+    font-family: 'Syne', sans-serif; font-size: 1.2rem;
+    font-weight: 700; margin-bottom: 10px;
+  }
+
+  .tool-desc { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+  /* TESTIMONIALS */
+  .testimonials { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+
+  .test-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    margin-top: 60px;
+  }
+
+  .test-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px;
+    transition: border-color 0.3s;
+  }
+  .test-card:hover { border-color: rgba(108,99,255,0.3); }
+
+  .test-quote {
+    font-size: 1rem; line-height: 1.7; color: var(--text);
+    margin-bottom: 24px; font-style: italic;
+  }
+
+  .test-author { display: flex; align-items: center; gap: 14px; }
+
+  .test-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; color: white; flex-shrink: 0;
+  }
+
+  .test-name { font-weight: 600; font-size: 0.9rem; }
+  .test-role { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+
+  /* FAQ */
+  .faq { padding: 100px 48px; max-width: 800px; margin: 0 auto; }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 24px 0;
+  }
+
+  .faq-q {
+    font-family: 'Syne', sans-serif; font-size: 1rem;
+    font-weight: 600; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .faq-icon { color: var(--accent); font-size: 1.2rem; transition: transform 0.3s; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+  .faq-a {
+    color: var(--muted); font-size: 0.9rem; line-height: 1.7;
+    margin-top: 16px; display: none;
+  }
+  .faq-item.open .faq-a { display: block; }
+
+  /* CTA FINAL */
+  .cta-final {
+    padding: 100px 48px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+
+  .cta-final::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(108,99,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-final h2 { max-width: 600px; margin: 0 auto 16px; }
+  .cta-final p { color: var(--muted); max-width: 480px; margin: 0 auto 40px; font-size: 1rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 48px;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px; max-width: 1200px; margin: 0 auto;
+  }
+
+  .footer-brand p {
+    color: var(--muted); font-size: 0.85rem;
+    line-height: 1.6; margin-top: 12px; max-width: 240px;
+  }
+
+  .footer-col h4 {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+  }
+
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--text); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px; text-align: center;
+    color: var(--muted); font-size: 0.8rem;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr; }
+    .stat { border-right: none; border-bottom: 1px solid var(--border); }
+    .toolkit-grid { grid-template-columns: 1fr; }
+    .test-grid { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr 1fr; }
+    .section, .toolkit, .testimonials, .faq, .cta-final { padding: 60px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">SuperGrow</div>
+  <ul class="nav-links">
+    <li><a href="#">Product</a></li>
+    <li><a href="#">Solutions</a></li>
+    <li><a href="#">Resources</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="btn-ghost">Log in</button>
+    <button class="btn-primary">Get started free</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Supergrow MCP is now live
+  </div>
+  <h1>Turn expertise into <span>influence on LinkedIn®</span></h1>
+  <p class="hero-sub">AI-powered content that captures your real voice — whether you're growing your personal brand or building your team's presence.</p>
+  <div class="hero-ctas">
+    <button class="btn-primary btn-large">Start free →</button>
+    <button class="btn-outline">Activate my team</button>
+  </div>
+  <div class="social-proof">
+    <div class="stars">★★★★★</div>
+    <p class="proof-text"><strong>4.9/5</strong> on G2 · Trusted by 10,000+ professionals</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">120%</div>
+    <div class="stat-label">Higher deal sizes when buyers follow execs on LinkedIn®</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">82%</div>
+    <div class="stat-label">Of B2B buyers say creator content influences their decisions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">1.7×</div>
+    <div class="stat-label">More likely to win deals with expert voices vs brand content</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section">
+  <span class="section-tag">Everything you need</span>
+  <h2>Build influence. Track what works.</h2>
+
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">✍️</div>
+      <div class="feat-title">Content Creation</div>
+      <div class="feat-desc">AI interviews, Content DNA, and repurposing in one workspace. Writes like you, not for you.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📅</div>
+      <div class="feat-title">Scheduling</div>
+      <div class="feat-desc">Calendar, queue, and first-comment scheduling. Plan your week in one clean view.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Insights & Analytics</div>
+      <div class="feat-desc">Track visibility, engagement, and pipeline impact. See what drives results and double down.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLKIT -->
+<div class="toolkit">
+  <div class="toolkit-inner">
+    <span class="section-tag">Full toolkit</span>
+    <h2>Everything else you need.</h2>
+
+    <div class="toolkit-grid">
+      <div class="tool-card">
+        <div class="tool-label">Content Repurposing</div>
+        <div class="tool-title">One source. Multiple formats.</div>
+        <div class="tool-desc">Turn YouTube videos, blog posts, and PDFs into LinkedIn®-ready posts. No rewriting required.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-label">Voice to Post</div>
+        <div class="tool-title">Speak your ideas.</div>
+        <div class="tool-desc">AI captures your thinking and turns a voice note into a LinkedIn®-ready post in your voice.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-label">Content Management</div>
+        <div class="tool-title">Drag-and-drop Kanban board.</div>
+        <div class="tool-desc">Draft, review, approved, scheduled. Always know exactly where every post stands.</div>
+      </div>
+      <div class="tool-card">
+        <div class="tool-label">Teams</div>
+        <div class="tool-title">Your team posts on-brand.</div>
+        <div class="tool-desc">Approval workflows, team analytics, and challenges. Manage all voices from one dashboard.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <span class="section-tag">Wall of love</span>
+  <h2>What our customers say.</h2>
+
+  <div class="test-grid">
+    <div class="test-card">
+      <p class="test-quote">"I went from posting once a month to 3× a week. Two inbound deals last quarter came directly from prospects who'd been reading my posts."</p>
+      <div class="test-author">
+        <div class="test-avatar">MT</div>
+        <div>
+          <div class="test-name">Marck Thiel</div>
+          <div class="test-role">Project Manager</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <p class="test-quote">"We activated 10 internal team members. The approval workflow makes it so easy for our marketing team to manage everything."</p>
+      <div class="test-author">
+        <div class="test-avatar">PC</div>
+        <div>
+          <div class="test-name">Patrick Cumming</div>
+          <div class="test-role">Director of Marketing, Klientboost</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <p class="test-quote">"The AI interview captured nuances in my thinking I couldn't have written myself. It felt like a real conversation, not a content exercise."</p>
+      <div class="test-author">
+        <div class="test-avatar">AL</div>
+        <div>
+          <div class="test-name">Andy Lambert</div>
+          <div class="test-role">Advisor</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <p class="test-quote">"Finally a system where our leadership posts on-brand without me rewriting everything. One approval hub, zero reputation risk."</p>
+      <div class="test-author">
+        <div class="test-avatar">PS</div>
+        <div>
+          <div class="test-name">Paul Souder</div>
+          <div class="test-role">Marketing PM, Friendship Industries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <span class="section-tag">FAQ</span>
+  <h2>Questions we get asked.</h2>
+
+  <div style="margin-top: 40px;">
+    <div class="faq-item open">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How does the AI interview work?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">You have a conversation with our AI interviewer. It asks thoughtful questions about your expertise, adapting in real-time to go deeper. Each 10–15 minute session generates multiple LinkedIn® post drafts that sound like you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Will my posts actually sound like me, not generic AI?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Yes. SuperGrow builds a voice profile unique to you — your vocabulary, tone, opinions, and topics you're known for. Because content starts from a real conversation, the output captures how you actually think and speak.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        How much time do I need to invest?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">A 10–15 minute conversation gives you a week's worth of LinkedIn® content. Most users spend under 30 minutes a week to stay consistently visible.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">
+        Is SuperGrow for individuals or teams?
+        <span class="faq-icon">+</span>
+      </div>
+      <div class="faq-a">Both. Individual users get content creation, scheduling, and analytics. Teams get everything individuals do, plus multi-member management, approval workflows, challenges, and permissions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <span class="section-tag">Get started</span>
+  <h2>Turn your expertise into measurable influence.</h2>
+  <p>Start building your LinkedIn® presence today. 7-day free trial, no commitment required.</p>
+  <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+    <button class="btn-primary btn-large">Start free →</button>
+    <button class="btn-outline">See pricing</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <div class="logo">SuperGrow</div>
+    <p>Turn expert thinking into strategic LinkedIn® visibility that drives influence and revenue.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Product</h4>
+    <ul>
+      <li><a href="#">For Individuals</a></li>
+      <li><a href="#">For Teams</a></li>
+      <li><a href="#">For Agencies</a></li>
+      <li><a href="#">Analytics</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Resources</h4>
+    <ul>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">Help Center</a></li>
+      <li><a href="#">Affiliates</a></li>
+      <li><a href="#">Status</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <ul>
+      <li><a href="#">About us</a></li>
+      <li><a href="#">LinkedIn®</a></li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">© 2026 SuperGrow. All rights reserved.</div>
+
+<script>
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    item.classList.toggle('open');
+  }
+
+  // Scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.feat-card, .tool-card, .test-card, .stat').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
